@@ -1,8 +1,17 @@
+import { useState } from "react";
+import { type PositionedEvent } from "../types";
 import { getDateDiff, calculateLanes } from "./utils";
 import TimelineEvent from "./TimelineEvent";
+import EventModal from "./EventModal";
 import timelineItems from "../timelineItems.ts";
 
 function TimelineContent() {
+  // state to manage the currently selected event for the modal
+  // initially set to null, meaning no event is selected
+  const [selectedEvent, setSelectedEvent] = useState<PositionedEvent | null>(
+    null,
+  );
+
   // this returns a flat array of events with assigned lanes,
   // along with the earliest start date and latest end date
   const { events, startDate, endDate } = calculateLanes(timelineItems);
@@ -12,25 +21,34 @@ function TimelineContent() {
   const totalLanes = Math.max(...events.map((e) => e.lane)) + 1;
 
   return (
-    <div className="overflow-x-auto">
-      <div
-        className="grid gap-2 rounded bg-gray-100 p-4"
-        style={{
-          // each lane takes 40px in height
-          gridTemplateRows: `repeat(${totalLanes}, 40px)`,
-          // each day gets one column
-          gridTemplateColumns: `repeat(${totalDays}, 1fr)`,
-        }}
-      >
-        {events.map((item) => (
-          <TimelineEvent
-            key={item.id}
-            timelineEvent={item}
-            startDate={startDate}
-          />
-        ))}
+    <>
+      <div className="overflow-x-auto">
+        <div
+          className="grid gap-2 rounded bg-gray-100 p-4"
+          style={{
+            // each lane takes 40px in height
+            gridTemplateRows: `repeat(${totalLanes}, 40px)`,
+            // each day gets one column
+            gridTemplateColumns: `repeat(${totalDays}, 1fr)`,
+          }}
+        >
+          {events.map((item) => (
+            <TimelineEvent
+              key={item.id}
+              timelineEvent={item}
+              startDate={startDate}
+              onClick={() => setSelectedEvent(item)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+      {selectedEvent ? (
+        <EventModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      ) : null}
+    </>
   );
 }
 

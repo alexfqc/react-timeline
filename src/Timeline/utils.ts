@@ -57,3 +57,17 @@ export function calculateLanes(events: TimelineEvent[]): {
     endDate,
   };
 }
+
+// formats a date string into a more human-readable format like "Dec 5, 2021"
+export function formatDate(dateString: string) {
+  // Parse the input string into a Date object
+  const date = new Date(dateString + "T00:00:00Z");
+
+  // format the date using the US locale with abbreviated month and numeric day/year
+  return date.toLocaleDateString("en-US", {
+    year: "numeric", // e.g., "2021"
+    month: "short", // e.g., "Dec"
+    day: "numeric", // e.g., "5"
+    timeZone: "UTC",
+  });
+}
