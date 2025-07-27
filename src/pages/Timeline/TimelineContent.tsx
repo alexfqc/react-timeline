@@ -22,9 +22,9 @@ function TimelineContent() {
 
   return (
     <>
-      <div className="overflow-x-auto">
+      <div className="w-full overflow-x-auto rounded bg-gray-100">
         <div
-          className="grid gap-2 rounded bg-gray-100 p-4"
+          className="grid gap-2 p-4"
           style={{
             // each lane takes 40px in height
             gridTemplateRows: `repeat(${totalLanes}, 40px)`,
