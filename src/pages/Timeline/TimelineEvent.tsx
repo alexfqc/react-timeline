@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { getDateDiff } from "./utils";
-import { type PositionedEvent } from "../types";
+import { type PositionedEvent } from "./types";
 import { COLORS } from "./constants";
 
 type Props = {

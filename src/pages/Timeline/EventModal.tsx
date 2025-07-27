@@ -1,4 +1,4 @@
-import { type PositionedEvent } from "../types";
+import { type PositionedEvent } from "./types";
 import { formatDate } from "./utils";
 
 type Props = {

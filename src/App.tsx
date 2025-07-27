@@ -1,4 +1,4 @@
-import Timeline from "./Timeline/index.tsx";
+import Timeline from "./pages/Timeline/index.tsx";
 
 function App() {
   return (

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { type PositionedEvent } from "../types";
-import { getDateDiff, calculateLanes } from "./utils";
-import TimelineEvent from "./TimelineEvent";
-import EventModal from "./EventModal";
-import timelineItems from "../timelineItems.ts";
+import { type PositionedEvent } from "./types.ts";
+import { getDateDiff, calculateLanes } from "./utils.ts";
+import TimelineEvent from "./TimelineEvent.tsx";
+import EventModal from "./EventModal.tsx";
+import timelineItems from "../../timelineItems.ts";
 
 function TimelineContent() {
   // state to manage the currently selected event for the modal

@@ -1,4 +1,4 @@
-import type { TimelineEvent, PositionedEvent } from "../types";
+import type { TimelineEvent, PositionedEvent } from "./types";
 
 // helper to calculate how many days between two dates
 export function getDateDiff(startDate: string, endDate: string): number {
