@@ -16,7 +16,7 @@ function TimelineEvent({ timelineEvent, startDate }: Props) {
 
   return (
     <div
-      className="overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-1 text-sm text-white shadow"
+      className="overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-1 text-sm text-white shadow transition-all duration-300 hover:brightness-110"
       style={{
         // assign a color based on the lane index
         backgroundColor: COLORS[timelineEvent.lane % 4],

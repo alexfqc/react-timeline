@@ -1,43 +1,14 @@
-import { useMemo } from "react";
-import { getDateDiff, calculateLanes } from "./utils";
-import type { TimelineEvent as TimelineEventType } from "../types";
-import TimelineEvent from "./TimelineEvent";
+import TimelineContent from "./TimelineContent";
 
-type Props = {
-  timelineItems: TimelineEventType[];
-};
-
-function Timeline({ timelineItems }: Props) {
-  // memoize the lane calculation to avoid recalculating on every render
-  // this returns a flat array of events with assigned lanes,
-  // along with the earliest start date and latest end date
-  const { events, startDate, endDate } = useMemo(
-    () => calculateLanes(timelineItems),
-    [timelineItems],
-  );
-
-  // calculate how many columns (days) and rows (lanes) the grid should have
-  const totalDays = getDateDiff(startDate, endDate) + 1;
-  const totalLanes = Math.max(...events.map((e) => e.lane)) + 1;
-
+function Timeline() {
   return (
-    <div className="overflow-x-auto">
-      <div
-        className="grid gap-2 bg-gray-100 p-4"
-        style={{
-          // each lane takes 40px in height
-          gridTemplateRows: `repeat(${totalLanes}, 40px)`,
-          // each day gets one column
-          gridTemplateColumns: `repeat(${totalDays}, 1fr)`,
-        }}
-      >
-        {events.map((item) => (
-          <TimelineEvent
-            key={item.id}
-            timelineEvent={item}
-            startDate={startDate}
-          />
-        ))}
+    <div className="flex justify-center px-4 py-8">
+      <div className="w-full max-w-6xl">
+        <h2 className="mb-6 text-2xl font-semibold text-gray-800">
+          Events Timeline
+        </h2>
+        {/* case TimelineContent fetches data from the server, Suspense could be used here */}
+        <TimelineContent />
       </div>
     </div>
   );
