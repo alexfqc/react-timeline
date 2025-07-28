@@ -59,6 +59,21 @@ Please use Node.js version 22.11.0 for best compatibility.
    npm install
    ```
 
+Lefthook install should run after packages are installed:
+
+```bash
+> react-timeline@0.0.0 prepare
+> lefthook install
+
+sync hooks: ✔️ (pre-commit)
+```
+
+Case it does not run, please run manually:
+
+```bash
+npm run prepare
+```
+
 2. Start the development server:
 
    ```bash
