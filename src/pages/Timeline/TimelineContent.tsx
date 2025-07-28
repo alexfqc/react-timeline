@@ -19,13 +19,37 @@ function TimelineContent() {
   const [eventsState, setEvents] = useState(events);
 
   const updateEvents = useCallback(
-    (updatedEvent: PositionedEvent) => {
-      // update the events state with the new event data
-      const updatedData = calculateLanes([
+    ({
+      updatedEvent,
+      shouldCalculateLanes = false,
+    }: {
+      updatedEvent: PositionedEvent;
+      shouldCalculateLanes: boolean;
+    }) => {
+      const updatedEvents: PositionedEvent[] = [
         ...eventsState.filter((ev) => ev.id !== updatedEvent.id),
         updatedEvent,
-      ]);
-      setEvents(updatedData.events);
+      ];
+
+      if (shouldCalculateLanes) {
+        // if lanes need to be recalculated, it calls the utility function
+        // which returns a new array of events with updated lanes
+        const updatedData = calculateLanes(
+          // remove lane property from updatedEvents
+          // to avoid conflicts with the utility function
+          updatedEvents.map(({ id, name, start, end }) => ({
+            id,
+            name,
+            start,
+            end,
+          })),
+        );
+        setEvents(updatedData.events);
+      } else {
+        // if lanes don't need recalculating, we just update the state
+        setEvents(updatedEvents);
+      }
+      setSelectedEvent(null);
     },
     [eventsState],
   );

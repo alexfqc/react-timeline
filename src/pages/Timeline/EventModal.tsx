@@ -5,25 +5,62 @@ import { formatDate } from "./utils";
 type Props = {
   event: PositionedEvent;
   onClose: () => void;
-  onUpdate: (event: PositionedEvent) => void;
+  onUpdate: ({
+    updatedEvent,
+    shouldCalculateLanes,
+  }: {
+    updatedEvent: PositionedEvent;
+    shouldCalculateLanes: boolean;
+  }) => void;
 };
 
 function EventModal({ event, onClose, onUpdate }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedEvent, setEditedEvent] = useState<PositionedEvent>(event);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setEditedEvent({
       ...editedEvent,
       [name]: value,
     });
   };
 
+  const handleStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const endDate = new Date(editedEvent.end);
+    const startDate = new Date(e.target.value);
+
+    setEditedEvent({
+      ...editedEvent,
+      start: startDate < endDate ? e.target.value : editedEvent.end,
+    });
+  };
+
+  const handleEndDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const startDate = new Date(editedEvent.start);
+    const endDate = new Date(e.target.value);
+
+    setEditedEvent({
+      ...editedEvent,
+      end: endDate > startDate ? e.target.value : editedEvent.start,
+    });
+  };
+
   const handleSave = () => {
     setIsEditing(false);
-    onUpdate(editedEvent);
+    onUpdate({
+      updatedEvent: { ...editedEvent, name: editedEvent.name.trim() },
+      shouldCalculateLanes:
+        event.start !== editedEvent.start || event.end !== editedEvent.end,
+    });
   };
+
+  const isSaveButtonDisabled =
+    editedEvent.name.trim() === "" ||
+    editedEvent.start === "" ||
+    editedEvent.end === "" ||
+    new Date(editedEvent.start) > new Date(editedEvent.end);
 
   return (
     <div
@@ -31,15 +68,8 @@ function EventModal({ event, onClose, onUpdate }: Props) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
-      onClick={onClose}
     >
-      <div
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg"
-        onClick={(e) => {
-          // Prevent closing when clicking inside the modal
-          e.stopPropagation();
-        }}
-      >
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
         <div className="mb-4 flex items-start justify-between">
           <h2 id="modal-title" className="text-lg font-semibold text-gray-800">
             Event Details
@@ -81,7 +111,7 @@ function EventModal({ event, onClose, onUpdate }: Props) {
                 type="text"
                 className="w-full rounded border px-2 py-1 text-sm"
                 value={editedEvent.name}
-                onChange={handleChange}
+                onChange={handleNameChange}
               />
             ) : (
               <p>{event.name}</p>
@@ -100,7 +130,7 @@ function EventModal({ event, onClose, onUpdate }: Props) {
                 type="date"
                 className="w-full rounded border px-2 py-1 text-sm"
                 value={editedEvent.start}
-                onChange={handleChange}
+                onChange={handleStartDateChange}
               />
             ) : (
               <p>{formatDate(event.start)}</p>
@@ -119,7 +149,7 @@ function EventModal({ event, onClose, onUpdate }: Props) {
                 type="date"
                 className="w-full rounded border px-2 py-1 text-sm"
                 value={editedEvent.end}
-                onChange={handleChange}
+                onChange={handleEndDateChange}
               />
             ) : (
               <p>{formatDate(event.end)}</p>
@@ -131,7 +161,12 @@ function EventModal({ event, onClose, onUpdate }: Props) {
               type="button"
               aria-label="Save changes"
               onClick={handleSave}
-              className="mt-4 w-full rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-200 hover:text-green-700"
+              className={`mt-4 w-full rounded px-4 py-2 text-sm font-medium transition ${
+                isSaveButtonDisabled
+                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                  : "bg-gray-200 text-gray-700 hover:bg-green-200 hover:text-green-700"
+              }`}
+              disabled={isSaveButtonDisabled}
             >
               Save Changes
             </button>
