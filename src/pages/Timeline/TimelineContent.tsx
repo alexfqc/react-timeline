@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { type PositionedEvent } from "./types.ts";
+import { useCallback, useState } from "react";
+import { type PositionedEvent } from "./types";
 import { getDateDiff, calculateLanes } from "./utils.ts";
 import TimelineEvent from "./TimelineEvent.tsx";
 import EventModal from "./EventModal.tsx";
@@ -16,9 +16,23 @@ function TimelineContent() {
   // along with the earliest start date and latest end date
   const { events, startDate, endDate } = calculateLanes(timelineItems);
 
+  const [eventsState, setEvents] = useState(events);
+
+  const updateEvents = useCallback(
+    (updatedEvent: PositionedEvent) => {
+      // update the events state with the new event data
+      const updatedData = calculateLanes([
+        ...eventsState.filter((ev) => ev.id !== updatedEvent.id),
+        updatedEvent,
+      ]);
+      setEvents(updatedData.events);
+    },
+    [eventsState],
+  );
+
   // calculate how many columns (days) and rows (lanes) the grid should have
   const totalDays = getDateDiff(startDate, endDate) + 1;
-  const totalLanes = Math.max(...events.map((e) => e.lane)) + 1;
+  const totalLanes = Math.max(...eventsState.map((e) => e.lane)) + 1;
 
   return (
     <>
@@ -32,7 +46,7 @@ function TimelineContent() {
             gridTemplateColumns: `repeat(${totalDays}, 1fr)`,
           }}
         >
-          {events.map((item) => (
+          {eventsState.map((item) => (
             <TimelineEvent
               key={item.id}
               timelineEvent={item}
@@ -46,6 +60,7 @@ function TimelineContent() {
         <EventModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          onUpdate={updateEvents}
         />
       ) : null}
     </>
